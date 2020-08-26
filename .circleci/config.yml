@@ -1,25 +1,9 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/project
-    docker:
-      - image: circleci/openjdk:8-jdk-stretch
-    steps:
-      - checkout
-      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
-          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: project-{{ checksum "pom.xml" }}
-      
-      - run: mvn dependency:go-offline # gets the project dependencies
-      
-      - save_cache: # saves the project dependencies
-          paths:
-            - ~/.m2
-          key: project-{{ checksum "pom.xml" }}
-      
-      - run: mvn clean package # run the actual tests
-      
-      - store_artifacts: # store the uberjar as an artifact
-      # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: target/sparkjava-hello-world-1.0.war
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples    
+version: 2.1
+
+orbs:
+  welcome: circleci/welcome-orb@0.4.1
+
+workflows:
+  welcome:
+    jobs:
+      - welcome/run
